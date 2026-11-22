@@ -1,6 +1,6 @@
 # Grid Square Locator — Visually Inconvenienced Hams
 
-Status: LIVE at https://ricis-ai.github.io/grid-locator/ (repo `ricis-ai/grid-locator`, GitHub Pages). Deployed 2026-11-16.
+Status: LIVE at https://visually-inconvenienced-hams.github.io/grid-locator/ (repo `visually-inconvenienced-hams/grid-locator`, GitHub Pages). Deployed 2026-11-16.
 
 ## What it is
 
@@ -49,4 +49,4 @@ To preview locally before deploying, serve this folder over http (the page fetch
 
 ## Deploy notes for Nova
 
-Create public repo `ricis-ai/grid-locator`, enable GitHub Pages from the main branch, and upload `index.html`, `grid.js`, and `places.json`. The build/test files and this README can go in the repo too; they are not loaded by the page. After deploy, verify live: EN61CN returns Tinley Park; a place search for "Tinley Park" returns EN61CN; the page loads with no console errors; the back link and (from inside Facebook) the close button behave as on the HamClock page.
+Create public repo `visually-inconvenienced-hams/grid-locator`, enable GitHub Pages from the main branch, and upload `index.html`, `grid.js`, and `places.json`. The build/test files and this README can go in the repo too; they are not loaded by the page. After deploy, verify live: EN61CN returns Tinley Park; a place search for "Tinley Park" returns EN61CN; the page loads with no console errors; the back link and (from inside Facebook) the close button behave as on the HamClock page.
