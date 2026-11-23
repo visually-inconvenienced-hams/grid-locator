@@ -7,7 +7,7 @@
     <meta name="description" content="Accessible grid square locator for amateur radio. Type a Maidenhead grid square and hear the nearest town, or type a town and get its grid square. Built for Visually Inconvenienced Hams." />
     <link rel="icon" href="data:," />
     <link rel="stylesheet" href="leaflet.css" />
-    <script>try{var t=localStorage.getItem("grid-locator-theme");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t);}var s=parseInt(localStorage.getItem("grid-locator-text-size"),10);if(s>=16&&s<=40&&s%4===0){document.documentElement.style.fontSize=s+"px";}}catch(e){}</script>
+    <script>try{var t=localStorage.getItem("grid-locator-theme");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t);}var c=localStorage.getItem("grid-locator-colors");if(c){document.documentElement.setAttribute("data-colors",c);}var f=localStorage.getItem("grid-locator-font");if(f==="serif"||f==="mono"){document.documentElement.setAttribute("data-font",f);}var a=localStorage.getItem("grid-locator-font-attr");if(a==="bold"||a==="italic"||a==="bold-italic"){document.documentElement.setAttribute("data-font-attr",a);}var s=parseInt(localStorage.getItem("grid-locator-text-size"),10);if(!isNaN(s)&&s>=16&&s<=40&&s%4===0){document.documentElement.style.fontSize=s+"px";}}catch(e){}</script>
     <title>Grid Square Locator — Visually Inconvenienced Hams</title>
     <style>
       :root {
@@ -91,6 +91,130 @@
         --leaflet-bg: #ffffff;
         --leaflet-fg: #000000;
       }
+      /* Color presets: named foreground/background pairs, in the e-reader
+       * tradition (Kindle, Nook). A preset sets the page variables the
+       * theme sets, so the two never fight: the last choice wins. These
+       * blocks come after the theme blocks and win ties, so a stored preset
+       * beats the theme until the theme is picked again. The map tiles
+       * follow the theme, not the preset, so --leaflet-bg and --leaflet-fg
+       * stay theme-driven and are not set here. Every pair passes AAA
+       * (7 to 1 or better); the pairs differ in brightness as well as
+       * hue, so they still differ for color-blind readers, and no pair is
+       * red on green or green on red. */
+      :root[data-colors="white-on-black"] {
+        --bg: #000000;
+        --text: #ffffff;
+        --good: #00ff00;
+        --fair: #ffb300;
+        --poor: #ff6666;
+        --focus: #ffff00;
+        --panel: #0d0d0d;
+        --border: #ffffff;
+        --muted: #cccccc;
+        --on-focus: #000000;
+        --on-good: #000000;
+        --on-fair: #000000;
+        --input-bg: #111111;
+        --panel-hover: #1f1f1f;
+        --good-hover: #66ff66;
+      }
+      :root[data-colors="black-on-white"] {
+        --bg: #ffffff;
+        --text: #000000;
+        --good: #007a00;
+        --fair: #7a5200;
+        --poor: #b00000;
+        --focus: #005fcc;
+        --panel: #f5f5f5;
+        --border: #000000;
+        --muted: #555555;
+        --on-focus: #ffffff;
+        --on-good: #ffffff;
+        --on-fair: #ffffff;
+        --input-bg: #ffffff;
+        --panel-hover: #e0e0e0;
+        --good-hover: #005a00;
+      }
+      :root[data-colors="yellow-on-black"] {
+        --bg: #000000;
+        --text: #ffff00;
+        --good: #00ff00;
+        --fair: #ffb300;
+        --poor: #ff6666;
+        --focus: #ffff00;
+        --panel: #0d0d0d;
+        --border: #ffffff;
+        --muted: #cccccc;
+        --on-focus: #000000;
+        --on-good: #000000;
+        --on-fair: #000000;
+        --input-bg: #111111;
+        --panel-hover: #1f1f1f;
+        --good-hover: #66ff66;
+      }
+      :root[data-colors="black-on-pale-yellow"] {
+        --bg: #fff9c4;
+        --text: #000000;
+        --good: #005a00;
+        --fair: #5c3d00;
+        --poor: #8f0000;
+        --focus: #000000;
+        --panel: #ffe082;
+        --border: #000000;
+        --muted: #333333;
+        --on-focus: #ffffff;
+        --on-good: #ffffff;
+        --on-fair: #ffffff;
+        --input-bg: #ffffff;
+        --panel-hover: #ffd54f;
+        --good-hover: #004000;
+      }
+      :root[data-colors="black-on-sepia"] {
+        --bg: #f4ecd8;
+        --text: #000000;
+        --good: #005a00;
+        --fair: #5c3d00;
+        --poor: #8f0000;
+        --focus: #000000;
+        --panel: #e8dcc0;
+        --border: #000000;
+        --muted: #333333;
+        --on-focus: #ffffff;
+        --on-good: #ffffff;
+        --on-fair: #ffffff;
+        --input-bg: #ffffff;
+        --panel-hover: #dccfa8;
+        --good-hover: #004000;
+      }
+      :root[data-colors="white-on-dark-blue"] {
+        --bg: #000080;
+        --text: #ffffff;
+        --good: #00ff00;
+        --fair: #ffb300;
+        --poor: #ffaaaa;
+        --focus: #ffff00;
+        --panel: #0000a0;
+        --border: #ffffff;
+        --muted: #cccccc;
+        --on-focus: #000000;
+        --on-good: #000000;
+        --on-fair: #000000;
+        --input-bg: #000060;
+        --panel-hover: #0000c0;
+        --good-hover: #66ff66;
+      }
+      /* Font family and font style, from the accessibility panel. System
+       * font stacks only: nothing is downloaded. Sans-serif is the page
+       * default, so it needs no rule. */
+      :root[data-font="serif"] body {
+        font-family: Georgia, "Times New Roman", Times, serif;
+      }
+      :root[data-font="mono"] body {
+        font-family: ui-monospace, "SF Mono", Menlo, Consolas, "Courier New", monospace;
+      }
+      :root[data-font-attr="bold"] body { font-weight: bold; }
+      :root[data-font-attr="italic"] body { font-style: italic; }
+      :root[data-font-attr="bold-italic"] body { font-weight: bold; font-style: italic; }
       * { box-sizing: border-box; }
       /* 1.25rem is 20px at the usual 16px browser default, and it
        * follows the browser's own text size setting. The text size
@@ -235,17 +359,121 @@
       }
       button.secondary:hover { background: var(--panel-hover); }
       button.secondary[disabled] { opacity: 0.6; cursor: default; }
-      /* Text size buttons: a row beside the theme toggle that wraps
-       * when the text is large or the screen is narrow. min-width 0
-       * lets a button shrink and its label wrap instead of pushing
-       * the page wider than the screen. */
-      .text-size { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; }
-      button.secondary.text-size-btn {
-        flex: 1 1 auto;
-        width: auto;
+      /* Accessibility button and panel. One button at the top of the page
+       * opens the display settings; the panel holds them as native form
+       * controls. The button follows the group button standard: a
+       * well-understood symbol above a short label, in high-contrast colors
+       * that are the same on all five pages and in both themes. The "aA"
+       * symbol is text, not an image, so it grows with the text size. Bold
+       * black text on gold passes AAA (15.0 to 1); the black border keeps
+       * the button distinct from a light page behind it. */
+      .acc-btn {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.1rem;
         min-width: 0;
-        margin: 0;
+        min-height: 4.5rem;
+        padding: 0.5rem 0.9rem;
+        font: inherit;
+        font-size: 1.15rem;
+        font-weight: bold;
+        color: #000000;
+        background: #ffd700;
+        border: 3px solid #000000;
+        cursor: pointer;
       }
+      .acc-btn:hover { background: #e6c200; }
+      .acc-btn:focus-visible {
+        outline: 4px solid #000000;
+        box-shadow: 0 0 0 7px #ffffff;
+        outline-offset: 2px;
+      }
+      .acc-btn .aa-symbol { display: block; line-height: 1; }
+      .acc-btn .aa-small { font-size: 0.75em; font-weight: bold; }
+      .acc-btn .aa-big { font-size: 1.5em; font-weight: bold; }
+      .acc-btn .acc-label { display: block; line-height: 1.2; text-align: center; min-width: 0; overflow-wrap: anywhere; }
+      .acc-panel {
+        border: 3px solid var(--border);
+        background: var(--panel);
+        padding: 1rem 1.25rem;
+        margin: 0.75rem 0;
+        /* Long words break anywhere, so the panel never forces horizontal
+         * scrolling at a narrow viewport with large text (WCAG 1.4.10). */
+        overflow-wrap: anywhere;
+      }
+      .acc-panel h2 { margin-top: 0; }
+      .acc-panel fieldset {
+        border: 2px solid var(--border);
+        padding: 0.75rem 1rem;
+        margin: 0.75rem 0;
+        /* A fieldset's default smallest width is its content's width, which
+         * would push the page wider than the screen at large text sizes. */
+        min-width: 0;
+      }
+      .acc-panel legend { font-weight: bold; font-size: 1.15rem; padding: 0 0.5rem; }
+      .acc-panel label { display: block; padding: 0.4rem 0; font-size: 1.15rem; cursor: pointer; }
+      .acc-panel input[type="radio"] {
+        width: 1.4em;
+        height: 1.4em;
+        margin-right: 0.5rem;
+        vertical-align: middle;
+        accent-color: var(--focus);
+      }
+      .acc-hint { font-size: 1.05rem; color: var(--muted); margin: 0.25rem 0 0.5rem; }
+      .acc-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; }
+      .acc-size-btn {
+        font: inherit;
+        font-size: 1.15rem;
+        font-weight: bold;
+        color: #000000;
+        background: #ffd700;
+        border: 3px solid #000000;
+        padding: 0.5rem 0.9rem;
+        min-height: 3rem;
+        min-width: 0;
+        cursor: pointer;
+      }
+      .acc-size-btn:hover { background: #e6c200; }
+      .acc-size-btn:focus-visible {
+        outline: 4px solid #000000;
+        box-shadow: 0 0 0 7px #ffffff;
+        outline-offset: 2px;
+      }
+      .acc-size-btn:disabled { opacity: 0.55; cursor: default; }
+      .acc-size-btn:disabled:hover { background: #ffd700; }
+      .acc-readout { font-size: 1.15rem; font-weight: bold; margin: 0.5rem 0; }
+      /* Color preset buttons wear their own pair, so each one previews what
+       * it does. The name always carries the meaning; the color is only a
+       * second cue. The border is the button's own foreground color, so on
+       * any page background either the fill or the border stands out. The
+       * pressed preset shows a check mark as well as its pressed state, so
+       * the choice is visible without relying on color. */
+      .acc-preset {
+        font: inherit;
+        font-size: 1.15rem;
+        font-weight: bold;
+        padding: 0.6rem 0.9rem;
+        min-height: 3rem;
+        min-width: 0;
+        border: 3px solid currentColor;
+        cursor: pointer;
+      }
+      .acc-preset:focus-visible {
+        outline: 4px solid #000000;
+        box-shadow: 0 0 0 7px #ffffff;
+        outline-offset: 2px;
+      }
+      .acc-preset .acc-check { display: none; }
+      .acc-preset[aria-pressed="true"] .acc-check { display: inline; }
+      .acc-preset .acc-check svg { width: 1em; height: 1em; vertical-align: middle; margin-right: 0.25em; }
+      .acc-preset[data-colors="white-on-black"] { background: #000000; color: #ffffff; }
+      .acc-preset[data-colors="black-on-white"] { background: #ffffff; color: #000000; }
+      .acc-preset[data-colors="yellow-on-black"] { background: #000000; color: #ffff00; }
+      .acc-preset[data-colors="black-on-pale-yellow"] { background: #fff9c4; color: #000000; }
+      .acc-preset[data-colors="black-on-sepia"] { background: #f4ecd8; color: #000000; }
+      .acc-preset[data-colors="white-on-dark-blue"] { background: #000080; color: #ffffff; }
       button.inline-show {
         display: inline-block;
         width: auto;
@@ -327,17 +555,57 @@
     <a class="skip-link" href="#lookup-grid">Skip to the grid square lookup</a>
     <main class="wrap">
       <h1>Grid Square Locator</h1>
-      <p><button type="button" class="secondary" id="theme-toggle">Switch to light mode</button></p>
-      <div class="text-size" role="group" aria-label="Text size">
-        <button type="button" class="secondary text-size-btn" id="text-smaller">Smaller text</button>
-        <button type="button" class="secondary text-size-btn" id="text-larger">Larger text</button>
-        <button type="button" class="secondary text-size-btn" id="text-reset">Reset text size</button>
+      <button type="button" class="acc-btn" id="accessibility-toggle" aria-expanded="false" aria-controls="accessibility-panel" aria-label="aA Accessibility settings"><span class="aa-symbol" aria-hidden="true"><span class="aa-small">a</span><span class="aa-big">A</span></span> <span class="acc-label">Accessibility</span></button>
+      <div class="acc-panel" id="accessibility-panel" hidden>
+        <h2>Accessibility settings</h2>
+        <fieldset>
+          <legend>One-tap setup</legend>
+          <p class="acc-hint">Sets yellow on black, bold letters, and text size 32 (or keeps your size if it is already larger).</p>
+          <button type="button" class="acc-size-btn" id="low-vision-btn">Low Vision</button>
+        </fieldset>
+        <fieldset>
+          <legend>Light or dark</legend>
+          <label><input type="radio" name="acc-theme" value="light" /> Light</label>
+          <label><input type="radio" name="acc-theme" value="dark" /> Dark</label>
+        </fieldset>
+        <fieldset>
+          <legend>Font</legend>
+          <label><input type="radio" name="acc-font" value="sans" /> Sans-serif</label>
+          <label><input type="radio" name="acc-font" value="serif" /> Serif</label>
+          <label><input type="radio" name="acc-font" value="mono" /> Monospace</label>
+        </fieldset>
+        <fieldset>
+          <legend>Text size</legend>
+          <div class="acc-row">
+            <button type="button" class="acc-size-btn" id="text-smaller">Smaller text</button>
+            <button type="button" class="acc-size-btn" id="text-larger">Larger text</button>
+            <button type="button" class="acc-size-btn" id="text-reset">Reset text size</button>
+          </div>
+          <p class="acc-readout" id="text-size-status" aria-live="polite">Text size 20 pixels</p>
+        </fieldset>
+        <fieldset>
+          <legend>Font style</legend>
+          <label><input type="radio" name="acc-attr" value="regular" /> Regular</label>
+          <label><input type="radio" name="acc-attr" value="bold" /> Bold</label>
+          <label><input type="radio" name="acc-attr" value="italic" /> Italic</label>
+          <label><input type="radio" name="acc-attr" value="bold-italic" /> Bold italic</label>
+        </fieldset>
+        <fieldset>
+          <legend>Colors</legend>
+          <div class="acc-row">
+            <button type="button" class="acc-preset" data-colors="white-on-black" aria-pressed="false"><span class="acc-check" aria-hidden="true"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg></span>White on black</button>
+            <button type="button" class="acc-preset" data-colors="black-on-white" aria-pressed="false"><span class="acc-check" aria-hidden="true"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg></span>Black on white</button>
+            <button type="button" class="acc-preset" data-colors="yellow-on-black" aria-pressed="false"><span class="acc-check" aria-hidden="true"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg></span>Yellow on black</button>
+            <button type="button" class="acc-preset" data-colors="black-on-pale-yellow" aria-pressed="false"><span class="acc-check" aria-hidden="true"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg></span>Black on pale yellow</button>
+            <button type="button" class="acc-preset" data-colors="black-on-sepia" aria-pressed="false"><span class="acc-check" aria-hidden="true"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg></span>Black on sepia</button>
+            <button type="button" class="acc-preset" data-colors="white-on-dark-blue" aria-pressed="false"><span class="acc-check" aria-hidden="true"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg></span>White on dark blue</button>
+          </div>
+        </fieldset>
       </div>
-      <p class="twin-note">Your text size choice is stored on this device only. It is never sent anywhere.</p>
-      <p class="sr-only" id="text-size-status" role="status" aria-live="polite"></p>
 
       <a class="back-link" href="https://m.facebook.com/groups/742838019382868">Back to Visually Inconvenienced Hams on Facebook</a>
       <p class="twin-note">A companion to the Technician License Class and the group. Type a grid square to find the nearest town, or type a town to find its grid square. Everything runs in your browser. No lookup is ever sent anywhere.</p>
+      <p class="twin-note" id="storage-note">Your light or dark choice, your colors, your font, and your text size are saved on this device only. They are never sent anywhere.</p>
 
       <p class="status" id="load-status" role="status" aria-live="polite">Loading the place list…</p>
 
@@ -396,7 +664,7 @@
       <p>Three limits to know. First, outside the United States only larger cities are listed, so in a rural area abroad the nearest named place may be a long way off. The page always says how far it is. Second, a town position is a single centre point from the source data, not the town border, so a place next to a square may show as a few kilometers away. Third, in the ocean or near the poles the nearest named place can be very far away indeed.</p>
       <p>The nearest place is found by measuring from the centre of the square to every place in the list and taking the closest one. The town may not be inside the square. The page says the distance and direction from the centre so that is always clear.</p>
       <p>Nothing you type leaves your phone or computer. The page loads its place list once from this same site, and every lookup after that happens on your own device. The visual map is the one exception: it loads its picture tiles from CARTO's servers, which shows CARTO roughly which part of the world the map is showing. No lookup text is sent with the tiles.</p>
-      <p>The page follows your device's light or dark setting, and the button at the top lets you pick either way. That choice is stored on your own device only and is never sent anywhere. The text size buttons at the top make the text smaller or larger, from 16 to 40 pixels, and that choice is stored on your own device only too.</p>
+      <p>The page follows your device's light or dark setting, and the Accessibility button at the top opens the settings where you can pick either way. That choice is stored on your own device only and is never sent anywhere. The settings also let you make the text smaller or larger, from 16 to 40 pixels, and that choice is stored on your own device only too.</p>
 
       <div class="about">
         <p>Built for Visually Inconvenienced Hams, a Facebook group for blind and visually impaired amateur radio operators.</p>
@@ -491,11 +759,19 @@
     }
   }
 
-  /* ---- Light and dark mode ------------------------------------------- */
-  /* The page defaults to the bright-on-black palette. A device set to
-   * light mode gets the light palette automatically, and the toggle
-   * button lets anyone pick either way. The choice is remembered on
-   * this device only. */
+  // ---- Accessibility settings ----------------------------------------------
+  // One button opens a panel with every display setting: light or dark,
+  // font family, text size, font style, and color presets. Every choice
+  // is remembered on this device only (localStorage), and the head
+  // script applies stored choices before first paint, so the page never
+  // flashes the wrong settings. Storage may be unavailable (private
+  // browsing), so every read and write is guarded and the page simply
+  // falls back to its defaults.
+  var THEME_KEY = "grid-locator-theme";
+  var COLORS_KEY = "grid-locator-colors";
+  var FONT_KEY = "grid-locator-font";
+  var ATTR_KEY = "grid-locator-font-attr";
+  var LOW_VISION_SIZE = 32;
   function systemTheme() {
     if (typeof window !== "undefined" && window.matchMedia
       && window.matchMedia("(prefers-color-scheme: light)").matches) return "light";
@@ -510,8 +786,75 @@
     return systemTheme();
   }
 
-  function themeLabel(theme) {
-    return theme === "light" ? "Switch to dark mode" : "Switch to light mode";
+  function readStored(key) {
+    try {
+      if (typeof localStorage !== "undefined") return localStorage.getItem(key);
+    } catch (e) { /* private mode: nothing was stored */ }
+    return null;
+  }
+  function store(key, value) {
+    try {
+      if (typeof localStorage !== "undefined") localStorage.setItem(key, value);
+    } catch (e) { /* private mode: the choice just is not remembered */ }
+  }
+  function clearStored(key) {
+    try {
+      if (typeof localStorage !== "undefined") localStorage.removeItem(key);
+    } catch (e) { /* private mode: nothing was stored */ }
+  }
+
+  /* Theme and color presets both set the same foreground/background
+   * variables; the last choice wins. A preset beats the theme until
+   * the theme is picked again, which resets the colors to that
+   * theme's default pair. Picking a preset leaves the theme radio
+   * as it is. */
+  var PRESETS = ["white-on-black", "black-on-white", "yellow-on-black",
+    "black-on-pale-yellow", "black-on-sepia", "white-on-dark-blue"];
+  function defaultColors(theme) {
+    return theme === "light" ? "black-on-white" : "white-on-black";
+  }
+  function currentColors() {
+    if (typeof document !== "undefined" && document.documentElement) {
+      var c = document.documentElement.getAttribute("data-colors");
+      if (PRESETS.indexOf(c) !== -1) return c;
+    }
+    return defaultColors(currentTheme());
+  }
+  function checkRadio(name, value) {
+    var radios = document.querySelectorAll('input[name="' + name + '"]');
+    for (var i = 0; i < radios.length; i++) {
+      radios[i].checked = (radios[i].value === value);
+    }
+  }
+  function markPresetButtons(colors) {
+    var btns = document.querySelectorAll(".acc-preset");
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].setAttribute("aria-pressed",
+        btns[i].getAttribute("data-colors") === colors ? "true" : "false");
+    }
+  }
+  function applyColors(colors, remember) {
+    if (typeof document !== "undefined" && document.documentElement) {
+      document.documentElement.setAttribute("data-colors", colors);
+    }
+    markPresetButtons(colors);
+    if (remember) store(COLORS_KEY, colors);
+  }
+  function applyFont(font, remember) {
+    if (typeof document !== "undefined" && document.documentElement) {
+      if (font === "sans") document.documentElement.removeAttribute("data-font");
+      else document.documentElement.setAttribute("data-font", font);
+    }
+    checkRadio("acc-font", font);
+    if (remember) store(FONT_KEY, font);
+  }
+  function applyFontAttr(attr, remember) {
+    if (typeof document !== "undefined" && document.documentElement) {
+      if (attr === "regular") document.documentElement.removeAttribute("data-font-attr");
+      else document.documentElement.setAttribute("data-font-attr", attr);
+    }
+    checkRadio("acc-attr", attr);
+    if (remember) store(ATTR_KEY, attr);
   }
 
   /* Map tiles: CARTO's Dark Matter in dark mode, Positron in light mode.
@@ -546,15 +889,11 @@
     if (typeof document !== "undefined" && document.documentElement) {
       document.documentElement.setAttribute("data-theme", theme);
     }
-    var btn = document.getElementById("theme-toggle");
-    if (btn) btn.textContent = themeLabel(theme);
-    if (remember) {
-      try {
-        if (typeof localStorage !== "undefined") {
-          localStorage.setItem("grid-locator-theme", theme);
-        }
-      } catch (e) { /* private mode: the choice just is not remembered */ }
-    }
+    checkRadio("acc-theme", theme);
+    /* Picking a theme resets the colors to that theme's default pair. */
+    applyColors(defaultColors(theme), false);
+    clearStored(COLORS_KEY);
+    if (remember) store(THEME_KEY, theme);
     if (map && mapTiles && typeof L !== "undefined") {
       map.removeLayer(mapTiles);
       var spec = tileSpec(theme);
@@ -565,6 +904,114 @@
       if (lastMap) drawMapLayers(lastMap.bounds, lastMap.first, lastMap.grid);
     }
   }
+
+  /* The panel is a disclosure: the button says whether it is open, and
+   * the panel's content is only in the tab order while it is open. */
+  var accBtn = document.getElementById("accessibility-toggle");
+  var accPanel = document.getElementById("accessibility-panel");
+  if (accBtn && accPanel) {
+    accBtn.addEventListener("click", function () {
+      if (accPanel.hasAttribute("hidden")) {
+        accPanel.removeAttribute("hidden");
+        accBtn.setAttribute("aria-expanded", "true");
+      } else {
+        accPanel.setAttribute("hidden", "");
+        accBtn.setAttribute("aria-expanded", "false");
+      }
+    });
+  }
+
+  /* Radio groups: one listener each, on the change event, so keyboard
+   * users (arrow keys move within a group) and pointer users share
+   * one path. */
+  function wireRadios(name, apply) {
+    var radios = document.querySelectorAll('input[name="' + name + '"]');
+    for (var i = 0; i < radios.length; i++) {
+      radios[i].addEventListener("change", function () {
+        if (this.checked) apply(this.value, true);
+      });
+    }
+  }
+  wireRadios("acc-theme", applyTheme);
+  wireRadios("acc-font", applyFont);
+  wireRadios("acc-attr", applyFontAttr);
+
+  /* Color presets: each button applies its pair and leaves the theme
+   * radio as it is. */
+  (function wirePresets() {
+    var btns = document.querySelectorAll(".acc-preset");
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].addEventListener("click", function () {
+        applyColors(this.getAttribute("data-colors"), true);
+      });
+    }
+  })();
+
+  /* One-tap Low Vision setup: yellow on black, bold letters, and text
+   * size 32 — or the size already in use if it is larger. It never
+   * shrinks the text. */
+  var lowVisionBtn = document.getElementById("low-vision-btn");
+  if (lowVisionBtn) {
+    lowVisionBtn.addEventListener("click", function () {
+      applyColors("yellow-on-black", true);
+      applyFontAttr("bold", true);
+      var size = Math.max(textSize, LOW_VISION_SIZE);
+      applyTextSize(size, true);
+    });
+  }
+
+  /* Follow the device theme if the user has never picked one. A stored
+   * color preset stays in force across a device change; only the theme
+   * radio follows the device. The map tiles follow the theme, so they
+   * are re-tiled here too, as in applyTheme. */
+  if (typeof window !== "undefined" && window.matchMedia) {
+    var lightQuery = window.matchMedia("(prefers-color-scheme: light)");
+    if (lightQuery.addEventListener) {
+      lightQuery.addEventListener("change", function () {
+        if (readStored(THEME_KEY) !== "light" && readStored(THEME_KEY) !== "dark") {
+          var t = lightQuery.matches ? "light" : "dark";
+          if (typeof document !== "undefined" && document.documentElement) {
+            document.documentElement.setAttribute("data-theme", t);
+          }
+          checkRadio("acc-theme", t);
+          if (PRESETS.indexOf(readStored(COLORS_KEY)) === -1) {
+            applyColors(defaultColors(t), false);
+          }
+          if (map && mapTiles && typeof L !== "undefined") {
+            map.removeLayer(mapTiles);
+            var spec = tileSpec(t);
+            mapTiles = L.tileLayer(spec.url, {
+              attribution: spec.attribution,
+              maxZoom: 19
+            }).addTo(map);
+            if (lastMap) drawMapLayers(lastMap.bounds, lastMap.first, lastMap.grid);
+          }
+        }
+      });
+    }
+  }
+
+  /* Start-up: resolve every stored choice (or the default), and set
+   * the panel controls to match what is on screen. The text size
+   * readout is set in the text size section below, which owns the
+   * stored size. */
+  (function initSettings() {
+    var theme = readStored(THEME_KEY);
+    if (theme !== "light" && theme !== "dark") theme = systemTheme();
+    if (typeof document !== "undefined" && document.documentElement) {
+      document.documentElement.setAttribute("data-theme", theme);
+    }
+    checkRadio("acc-theme", theme);
+    var colors = readStored(COLORS_KEY);
+    if (PRESETS.indexOf(colors) === -1) colors = defaultColors(theme);
+    applyColors(colors, false);
+    var font = readStored(FONT_KEY);
+    if (font !== "serif" && font !== "mono") font = "sans";
+    applyFont(font, false);
+    var attr = readStored(ATTR_KEY);
+    if (attr !== "bold" && attr !== "italic" && attr !== "bold-italic") attr = "regular";
+    applyFontAttr(attr, false);
+  })();
 
   var map = null;
   var mapTiles = null;
@@ -749,32 +1196,6 @@
     lookupGrid("EN61CN");
   });
 
-  /* Theme toggle: label it for the theme in use, and follow the device
-   * if the user has never picked one. */
-  var themeBtn = $("theme-toggle");
-  if (themeBtn) {
-    themeBtn.textContent = themeLabel(currentTheme());
-    themeBtn.addEventListener("click", function () {
-      applyTheme(currentTheme() === "light" ? "dark" : "light", true);
-    });
-  }
-  if (typeof window !== "undefined" && window.matchMedia) {
-    var lightQuery = window.matchMedia("(prefers-color-scheme: light)");
-    if (lightQuery.addEventListener) {
-      lightQuery.addEventListener("change", function () {
-        var stored = null;
-        try {
-          if (typeof localStorage !== "undefined") {
-            stored = localStorage.getItem("grid-locator-theme");
-          }
-        } catch (e) { stored = null; }
-        if (stored !== "light" && stored !== "dark") {
-          applyTheme(lightQuery.matches ? "light" : "dark", false);
-        }
-      });
-    }
-  }
-
   /* ---- Text size ------------------------------------------------------- */
   /* The root font size starts at 20 pixels (1.25rem in the stylesheet).
    * The buttons move it in 4-pixel steps from 16 to 40 pixels, and
@@ -782,7 +1203,7 @@
    * Nearly all text on the page is sized in rem, so it all follows the
    * root size. The choice is remembered on this device only. The head
    * script applies a stored size before first paint, so this section
-   * only has to wire the buttons and keep them in step. */
+   * only has to wire the buttons, set the readout, and keep them in step. */
   var TEXT_SIZE_KEY = "grid-locator-text-size";
   var TEXT_SIZE_DEFAULT = 20;
   var TEXT_SIZE_MIN = 16;
@@ -840,11 +1261,14 @@
     } catch (e) { /* private mode: nothing stored to forget */ }
     updateTextSizeButtons();
     if (textSizeStatus) {
-      textSizeStatus.textContent = "Text size reset to default";
+      textSizeStatus.textContent = "Text size " + TEXT_SIZE_DEFAULT + " pixels";
     }
   }
 
   updateTextSizeButtons();
+  if (textSizeStatus) {
+    textSizeStatus.textContent = "Text size " + textSize + " pixels";
+  }
   if (smallerBtn) {
     smallerBtn.addEventListener("click", function () {
       if (textSize > TEXT_SIZE_MIN) {
