@@ -7,7 +7,7 @@
     <meta name="description" content="Accessible grid square locator for amateur radio. Type a Maidenhead grid square and hear the nearest town, or type a town and get its grid square. Built for Visually Inconvenienced Hams." />
     <link rel="icon" href="data:," />
     <link rel="stylesheet" href="leaflet.css" />
-    <script>try{var t=localStorage.getItem("grid-locator-theme");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t);}}catch(e){}</script>
+    <script>try{var t=localStorage.getItem("grid-locator-theme");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t);}var s=parseInt(localStorage.getItem("grid-locator-text-size"),10);if(s>=16&&s<=40&&s%4===0){document.documentElement.style.fontSize=s+"px";}}catch(e){}</script>
     <title>Grid Square Locator — Visually Inconvenienced Hams</title>
     <style>
       :root {
@@ -92,7 +92,10 @@
         --leaflet-fg: #000000;
       }
       * { box-sizing: border-box; }
-      html { font-size: 20px; }
+      /* 1.25rem is 20px at the usual 16px browser default, and it
+       * follows the browser's own text size setting. The text size
+       * buttons set an exact pixel size on top of this. */
+      html { font-size: 1.25rem; }
       body {
         margin: 0;
         background: var(--bg);
@@ -100,6 +103,10 @@
         font-family: Verdana, Geneva, "Segoe UI", Tahoma, sans-serif;
         line-height: 1.5;
         padding: 1rem;
+        /* Long words and links (a place name, a web address) break
+         * rather than push the page sideways at the largest text size
+         * on a narrow screen. Ordinary words still wrap whole. */
+        overflow-wrap: break-word;
       }
       .wrap { max-width: 46rem; margin: 0 auto; }
 
@@ -175,7 +182,10 @@
       .contents li { padding: 0.3rem 0; }
 
       form { margin: 0.75rem 0; }
-      fieldset { border: 3px solid var(--border); background: var(--panel); padding: 1rem 1.25rem; margin: 0; }
+      /* min-width 0: a fieldset's default min-width is its content's
+       * widest unbreakable piece, which at the largest text size is
+       * wider than a narrow phone screen and pushes the page sideways. */
+      fieldset { border: 3px solid var(--border); background: var(--panel); padding: 1rem 1.25rem; margin: 0; min-width: 0; }
       fieldset:disabled { opacity: 0.6; }
       legend { font-size: 1.2rem; font-weight: bold; padding: 0 0.5rem; }
       label { display: block; font-size: 1.2rem; font-weight: bold; margin: 0.5rem 0 0.25rem; }
@@ -183,6 +193,7 @@
       input[type="text"] {
         display: block;
         width: 100%;
+        min-width: 0;
         min-height: 3.5rem;
         padding: 0.75rem 1rem;
         font: inherit;
@@ -223,6 +234,18 @@
         cursor: pointer;
       }
       button.secondary:hover { background: var(--panel-hover); }
+      button.secondary[disabled] { opacity: 0.6; cursor: default; }
+      /* Text size buttons: a row beside the theme toggle that wraps
+       * when the text is large or the screen is narrow. min-width 0
+       * lets a button shrink and its label wrap instead of pushing
+       * the page wider than the screen. */
+      .text-size { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; }
+      button.secondary.text-size-btn {
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 0;
+        margin: 0;
+      }
       button.inline-show {
         display: inline-block;
         width: auto;
@@ -305,6 +328,13 @@
     <main class="wrap">
       <h1>Grid Square Locator</h1>
       <p><button type="button" class="secondary" id="theme-toggle">Switch to light mode</button></p>
+      <div class="text-size" role="group" aria-label="Text size">
+        <button type="button" class="secondary text-size-btn" id="text-smaller">Smaller text</button>
+        <button type="button" class="secondary text-size-btn" id="text-larger">Larger text</button>
+        <button type="button" class="secondary text-size-btn" id="text-reset">Reset text size</button>
+      </div>
+      <p class="twin-note">Your text size choice is stored on this device only. It is never sent anywhere.</p>
+      <p class="sr-only" id="text-size-status" role="status" aria-live="polite"></p>
 
       <a class="back-link" href="https://m.facebook.com/groups/742838019382868">Back to Visually Inconvenienced Hams on Facebook</a>
       <p class="twin-note">A companion to the Technician License Class and the group. Type a grid square to find the nearest town, or type a town to find its grid square. Everything runs in your browser. No lookup is ever sent anywhere.</p>
@@ -366,7 +396,7 @@
       <p>Three limits to know. First, outside the United States only larger cities are listed, so in a rural area abroad the nearest named place may be a long way off. The page always says how far it is. Second, a town position is a single centre point from the source data, not the town border, so a place next to a square may show as a few kilometers away. Third, in the ocean or near the poles the nearest named place can be very far away indeed.</p>
       <p>The nearest place is found by measuring from the centre of the square to every place in the list and taking the closest one. The town may not be inside the square. The page says the distance and direction from the centre so that is always clear.</p>
       <p>Nothing you type leaves your phone or computer. The page loads its place list once from this same site, and every lookup after that happens on your own device. The visual map is the one exception: it loads its picture tiles from CARTO's servers, which shows CARTO roughly which part of the world the map is showing. No lookup text is sent with the tiles.</p>
-      <p>The page follows your device's light or dark setting, and the button at the top lets you pick either way. That choice is stored on your own device only and is never sent anywhere.</p>
+      <p>The page follows your device's light or dark setting, and the button at the top lets you pick either way. That choice is stored on your own device only and is never sent anywhere. The text size buttons at the top make the text smaller or larger, from 16 to 40 pixels, and that choice is stored on your own device only too.</p>
 
       <div class="about">
         <p>Built for Visually Inconvenienced Hams, a Facebook group for blind and visually impaired amateur radio operators.</p>
@@ -743,6 +773,94 @@
         }
       });
     }
+  }
+
+  /* ---- Text size ------------------------------------------------------- */
+  /* The root font size starts at 20 pixels (1.25rem in the stylesheet).
+   * The buttons move it in 4-pixel steps from 16 to 40 pixels, and
+   * Reset goes back to the default and forgets the stored choice.
+   * Nearly all text on the page is sized in rem, so it all follows the
+   * root size. The choice is remembered on this device only. The head
+   * script applies a stored size before first paint, so this section
+   * only has to wire the buttons and keep them in step. */
+  var TEXT_SIZE_KEY = "grid-locator-text-size";
+  var TEXT_SIZE_DEFAULT = 20;
+  var TEXT_SIZE_MIN = 16;
+  var TEXT_SIZE_MAX = 40;
+  var TEXT_SIZE_STEP = 4;
+
+  var textSize = TEXT_SIZE_DEFAULT;
+  try {
+    if (typeof localStorage !== "undefined") {
+      var storedSize = parseInt(localStorage.getItem(TEXT_SIZE_KEY), 10);
+      if (storedSize >= TEXT_SIZE_MIN && storedSize <= TEXT_SIZE_MAX
+        && storedSize % TEXT_SIZE_STEP === 0) {
+        textSize = storedSize;
+      }
+    }
+  } catch (e) { /* private mode: the choice just is not remembered */ }
+
+  var smallerBtn = $("text-smaller");
+  var largerBtn = $("text-larger");
+  var resetBtn = $("text-reset");
+  var textSizeStatus = $("text-size-status");
+
+  function updateTextSizeButtons() {
+    if (smallerBtn) smallerBtn.disabled = textSize <= TEXT_SIZE_MIN;
+    if (largerBtn) largerBtn.disabled = textSize >= TEXT_SIZE_MAX;
+  }
+
+  function applyTextSize(size, announce) {
+    textSize = size;
+    if (typeof document !== "undefined" && document.documentElement) {
+      document.documentElement.style.fontSize = size + "px";
+    }
+    try {
+      if (typeof localStorage !== "undefined") {
+        localStorage.setItem(TEXT_SIZE_KEY, String(size));
+      }
+    } catch (e) { /* private mode: the choice just is not remembered */ }
+    updateTextSizeButtons();
+    if (announce && textSizeStatus) {
+      textSizeStatus.textContent = "Text size " + size + " pixels";
+    }
+  }
+
+  function resetTextSize() {
+    textSize = TEXT_SIZE_DEFAULT;
+    /* Clear the inline size so the stylesheet default (1.25rem) applies
+     * again, and forget the stored choice. */
+    if (typeof document !== "undefined" && document.documentElement) {
+      document.documentElement.style.fontSize = "";
+    }
+    try {
+      if (typeof localStorage !== "undefined") {
+        localStorage.removeItem(TEXT_SIZE_KEY);
+      }
+    } catch (e) { /* private mode: nothing stored to forget */ }
+    updateTextSizeButtons();
+    if (textSizeStatus) {
+      textSizeStatus.textContent = "Text size reset to default";
+    }
+  }
+
+  updateTextSizeButtons();
+  if (smallerBtn) {
+    smallerBtn.addEventListener("click", function () {
+      if (textSize > TEXT_SIZE_MIN) {
+        applyTextSize(Math.max(TEXT_SIZE_MIN, textSize - TEXT_SIZE_STEP), true);
+      }
+    });
+  }
+  if (largerBtn) {
+    largerBtn.addEventListener("click", function () {
+      if (textSize < TEXT_SIZE_MAX) {
+        applyTextSize(Math.min(TEXT_SIZE_MAX, textSize + TEXT_SIZE_STEP), true);
+      }
+    });
+  }
+  if (resetBtn) {
+    resetBtn.addEventListener("click", resetTextSize);
   }
 
   /* ---- Load the place list (same site, no outside service) ------------ */
